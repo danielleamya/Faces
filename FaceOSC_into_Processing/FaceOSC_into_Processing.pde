@@ -1,3 +1,16 @@
+/*
+
+Danielle McPhatter | 2018 | Faces Assignment
+
+An interactive audio tour through the main area on my apartment, 
+where I do most, if not all, of my work in.
+
+Sketch connects FaceOSC with Minim to create a real-time mixing 
+experience through various field recordings of areas within the space.
+ 
+*/
+
+
 import oscP5.*;
 OscP5 oscP5;
 
@@ -53,21 +66,21 @@ void setup() {
   oscP5.plug(this, "posePosition", "/pose/position");
   oscP5.plug(this, "poseOrientation", "/pose/orientation");
 
-  //keyboard.loop();
+  keyboard.loop();
 
-  //sink.loop();
+  sink.loop();
   microwave.loop();
-  //fridge.loop();
+  fridge.loop();
 
-  //tv.loop();
-  //wine.loop();
+  tv.loop();
+  wine.loop();
 }
 
 void draw() {  
   background(255);
   stroke(0);
   image(room, 0, 0);
-  
+
   //--------------- LEFT SIDE ---------------\\
 
   // Sink
@@ -80,35 +93,51 @@ void draw() {
     float sinkVal = -48; 
     sink.setGain(sinkVal);
   }
-  
-    // Microwave
+
+  // Microwave
   if (posePosition.x > width/2 && posePosition.x < width - width/4 && posePosition.y > height/4 && posePosition.y < height/2) {
     float microwaveX = map(posePosition.x, width - width/6, width/2, 48, -48);
     float microwaveY = map(posePosition.y, height/8, height/2, 48, -48);
-    if (microwaveX > 0){
+    if (microwaveX > 0) {
       microwaveX = -microwaveX;
     }
-    if (microwaveY > 0){
+    if (microwaveY > 0) {
       microwaveY = -microwaveY;
     }
     float microwaveVal = (microwaveX+microwaveY)/2;
-    println(microwaveVal);
     microwave.setGain(microwaveVal);
   } else {
     float microwaveVal = -48; 
     microwave.setGain(microwaveVal);
   }
-  
+
+  // Fridge
+  if (posePosition.x < width*2/3 && posePosition.x > width/2 && posePosition.y > height/4 && posePosition.y < (height*4)/5) {
+    float fridgeX = map(posePosition.x, width/2, width*2/3, 48, -48);
+    float fridgeY = map(posePosition.y, height/4, height*4/5, 48, -48);
+    if (fridgeX > 0) {
+      fridgeX = -fridgeX;
+    }
+    if (fridgeY > 0) {
+      fridgeY = -fridgeY;
+    }
+    float fridgeVal = (fridgeX+fridgeY)/2;
+    println(fridgeVal);
+    fridge.setGain(fridgeVal);
+  } else {
+    float fridgeVal = -48; 
+    fridge.setGain(fridgeVal);
+  }
+
   //----------------- CENTER -----------------\\
-  
+
   // KEYBOARD
-    if (posePosition.x <= width*2/3 && posePosition.x >= width/3 && posePosition.y > height/2) {
+  if (posePosition.x <= width*2/3 && posePosition.x >= width/3 && posePosition.y > height/2) {
     float keyboardX = map(posePosition.x, width/3, width*2/3, 48, -48);
     float keyboardY = map(posePosition.y, height - height/8, height/3, 0, -48);
-    if (keyboardX > 0){
+    if (keyboardX > 0) {
       keyboardX = -keyboardX;
     }
-    println(keyboardX);
     float keyboardVal = (keyboardX+keyboardY)/2;
     keyboard.setGain(keyboardVal);
   } else {
@@ -117,12 +146,12 @@ void draw() {
   }
 
   //--------------- RIGHT SIDE ---------------\\
-  
+
   // TV
   if (posePosition.x < width/2 && posePosition.y >= height/4 && posePosition.y <= (height*3/4)) {
     float tvX = map(posePosition.x, 0 + width/8, width/2 + width/8, -12, -48);
     float tvY = map(posePosition.y, height/4, height*3/4, 48, -48);
-    if (tvY > 0){
+    if (tvY > 0) {
       tvY = -tvY;
     }
     float tvVal = (tvX+tvY)/2;
@@ -132,14 +161,23 @@ void draw() {
     tv.setGain(tvVal);
   } 
 
-  float microwaveVal = map(posePosition.x, width, 0, 6, -48);
-  float fridgeVal = map(posePosition.x, width, 0, 6, -48);
-
-  microwave.setGain(microwaveVal);
-  fridge.setGain(fridgeVal);
-  float wineVal = map(posePosition.x, 0, width, 6, -48);
-
-  wine.setGain(wineVal);
+  // Wine
+  if (posePosition.x < width/2 && posePosition.x > width/3 && posePosition.y > height/3 && posePosition.y < (height*2)/3) {
+    float wineX = map(posePosition.x, width/2, width/3, 48, -48);
+    float wineY = map(posePosition.y, height/3, height*2/3, 48, -48);
+    if (wineX > 0) {
+      wineX = -wineX;
+    }
+    if (wineY > 0) {
+      wineY = -wineY;
+    }
+    float wineVal = (wineX+wineY)/2;
+    println(wineVal);
+    wine.setGain(wineVal);
+  } else {
+    float wineVal = -48; 
+    wine.setGain(wineVal);
+  }
 }
 
 // OSC CALLBACK FUNCTIONS
